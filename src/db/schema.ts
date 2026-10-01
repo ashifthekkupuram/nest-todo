@@ -13,5 +13,7 @@ export const todos = pgTable('todos', {
     .notNull(),
 });
 
-export type User = typeof todos.$inferSelect
-export type NewUser = typeof todos.$inferInsert
+export type Todo = typeof todos.$inferSelect
+export type NewTodo = typeof todos.$inferInsert
+
+export type Status = (typeof status.enumValues)[number] 

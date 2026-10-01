@@ -8,6 +8,20 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    services:
+      postgres-db:
+        image: postgres:15
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test1234
+          POSTGRES_DB: nest-todo-test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - name: checkout code
         uses: actions/checkout@v4
@@ -21,6 +35,15 @@ jobs:
       - name: install dependencies
         run: npm ci
 
+      - name: run database push
+        env:
+          DATABASE_URL: postgresql://test:test1234@localhost:5432/nest-todo-test
+        run: npx drizzle-kit push
+
       - name: run tests
+        env:
+          DATABASE_TEST_URL: postgresql://test:test1234@localhost:5432/nest-todo-test
         run: npm test
+    
+
 
